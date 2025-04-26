@@ -1,4 +1,3 @@
-
 import React from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import { Layout, BookOpen, MessageSquare, BookText } from 'lucide-react';
@@ -34,7 +33,7 @@ export const AppSidebar: React.FC = () => {
   ];
 
   return (
-    <aside className="h-screen w-64 bg-white border-r border-gray-200 flex flex-col">
+    <aside className="fixed top-0 left-0 h-screen w-64 bg-white border-r border-gray-200 flex flex-col overflow-y-auto">
       <div className="p-6 border-b border-gray-200">
         <div className="flex items-center space-x-3">
           <div className="w-10 h-10 rounded-full bg-avatar-primary flex items-center justify-center text-white font-bold text-lg">
@@ -47,7 +46,7 @@ export const AppSidebar: React.FC = () => {
       {user && (
         <div className="p-4 border-b border-gray-200">
           <div className="flex items-center space-x-3">
-            <Avatar size="sm" />
+            <Avatar size="sm" emotion="happy" />
             <div>
               <p className="font-medium">{user.name}</p>
               <p className="text-xs text-gray-500">{user.degreeType} Student</p>
