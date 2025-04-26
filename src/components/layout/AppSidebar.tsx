@@ -1,13 +1,14 @@
 import React from 'react';
 import { Link, useLocation } from 'react-router-dom';
-import { Layout, BookOpen, MessageSquare, BookText } from 'lucide-react';
+import { Layout, BookOpen, MessageSquare, BookText, LogOut } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { useAppContext } from '@/context/AppContext';
 import { Avatar } from '@/components/Avatar';
+import { Button } from '@/components/ui/button';
 
 export const AppSidebar: React.FC = () => {
   const location = useLocation();
-  const { user } = useAppContext();
+  const { user, logout } = useAppContext();
   
   const menuItems = [
     {
@@ -31,6 +32,10 @@ export const AppSidebar: React.FC = () => {
       path: '/quiz'
     },
   ];
+
+  const handleLogout = async () => {
+    await logout();
+  };
 
   return (
     <aside className="fixed top-0 left-0 h-screen w-64 bg-white border-r border-gray-200 flex flex-col overflow-y-auto">
@@ -86,6 +91,18 @@ export const AppSidebar: React.FC = () => {
           </div>
           <p className="text-xs text-gray-500 mt-1">35% Complete</p>
         </div>
+      </div>
+      
+      {/* Logout Button */}
+      <div className="p-4 border-t border-gray-200">
+        <Button 
+          variant="outline" 
+          className="w-full flex items-center justify-center gap-2"
+          onClick={handleLogout}
+        >
+          <LogOut className="h-4 w-4" />
+          <span>Logout</span>
+        </Button>
       </div>
     </aside>
   );

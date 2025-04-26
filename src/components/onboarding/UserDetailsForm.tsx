@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { motion } from 'framer-motion';
 import { useAppContext } from '@/context/AppContext';
@@ -19,7 +18,7 @@ import { cn } from '@/lib/utils';
 import { Avatar } from '@/components/Avatar';
 
 const UserDetailsForm: React.FC<{ onComplete: () => void }> = ({ onComplete }) => {
-  const { setUser, setIsOnboarded } = useAppContext();
+  const { setUser, setIsOnboarded, authUser } = useAppContext();
   const { toast } = useToast();
   const [name, setName] = useState('');
   const [degreeType, setDegreeType] = useState<DegreeType | ''>('');
@@ -63,13 +62,24 @@ const UserDetailsForm: React.FC<{ onComplete: () => void }> = ({ onComplete }) =
       return;
     }
 
-    setUser({
-      name,
-      degreeType: degreeType as DegreeType,
-      learningPreferences
-    });
-    setIsOnboarded(true);
-    onComplete();
+    // Create user with authUser data
+    if (authUser) {
+      setUser({
+        uid: authUser.uid,
+        email: authUser.email || '',
+        name,
+        degreeType: degreeType as DegreeType,
+        learningPreferences
+      });
+      setIsOnboarded(true);
+      onComplete();
+    } else {
+      toast({
+        title: "Authentication Error",
+        description: "Please log in again.",
+        variant: "destructive"
+      });
+    }
   };
 
   return (
