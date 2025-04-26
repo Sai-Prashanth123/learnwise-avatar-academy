@@ -1,10 +1,9 @@
-
 import React, { useState } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
-import { Upload, Youtube, Link, FileText, ArrowRight } from 'lucide-react';
+import { Upload, Youtube, Link, FileText, ArrowRight, BrainCircuit } from 'lucide-react';
 import { motion } from 'framer-motion';
 import { ContentInput } from '@/types';
 import { useNavigate } from 'react-router-dom';
@@ -18,12 +17,16 @@ import {
   SelectValue,
 } from '@/components/ui/select';
 
+// Define explanation level type
+type ExplanationLevel = 'simple' | 'moderate' | 'advanced';
+
 const AITutor: React.FC = () => {
   const navigate = useNavigate();
   const { toast } = useToast();
   const [inputType, setInputType] = useState<ContentInput['type'] | ''>('');
   const [content, setContent] = useState<string>('');
   const [file, setFile] = useState<File | null>(null);
+  const [explanationLevel, setExplanationLevel] = useState<ExplanationLevel>('moderate');
 
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.files && e.target.files[0]) {
@@ -60,8 +63,28 @@ const AITutor: React.FC = () => {
     }
 
     // In a real app, we'd process the input here
-    // For now, just navigate to the learning session
-    navigate('/ai-tutor/session', { state: { inputType, content: file || content } });
+    // For now, just navigate to the learning session with the explanation level
+    navigate('/ai-tutor/session', { 
+      state: { 
+        inputType, 
+        content: file || content,
+        explanationLevel
+      } 
+    });
+  };
+
+  // Helper function to render the explanation level description
+  const getExplanationDescription = (level: ExplanationLevel) => {
+    switch (level) {
+      case 'simple':
+        return 'Basic explanations with simplified concepts. Great for beginners or quick overviews.';
+      case 'moderate':
+        return 'Balanced depth with practical examples. Good for intermediate learners.';
+      case 'advanced':
+        return 'In-depth explanations with detailed context. Ideal for deep understanding.';
+      default:
+        return '';
+    }
   };
 
   return (
@@ -195,6 +218,40 @@ const AITutor: React.FC = () => {
                     />
                   </div>
                 )}
+
+                {/* Step 3: Select Explanation Level */}
+                <motion.div
+                  initial={{ opacity: 0, y: 10 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  className="pt-6 space-y-4"
+                >
+                  <p className="text-sm font-medium">Step 3: Choose Explanation Level</p>
+                  
+                  <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
+                    {['simple', 'moderate', 'advanced'].map((level) => (
+                      <motion.div
+                        key={level}
+                        whileHover={{ scale: 1.02 }}
+                        className={`p-4 border rounded-lg cursor-pointer transition-colors ${
+                          explanationLevel === level 
+                            ? 'border-avatar-primary bg-avatar-primary/10' 
+                            : 'border-gray-200 hover:border-avatar-primary/50'
+                        }`}
+                        onClick={() => setExplanationLevel(level as ExplanationLevel)}
+                      >
+                        <div className="flex items-center gap-3 mb-2">
+                          <BrainCircuit className={`h-5 w-5 ${
+                            explanationLevel === level ? 'text-avatar-primary' : 'text-gray-500'
+                          }`} />
+                          <span className="font-medium capitalize">{level}</span>
+                        </div>
+                        <p className="text-xs text-gray-500">
+                          {getExplanationDescription(level as ExplanationLevel)}
+                        </p>
+                      </motion.div>
+                    ))}
+                  </div>
+                </motion.div>
 
                 <div className="pt-4">
                   <Button onClick={handleSubmit} className="w-full sm:w-auto">

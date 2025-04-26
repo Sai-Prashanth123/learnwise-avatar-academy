@@ -46,7 +46,7 @@ const ProtectedRoute = () => {
 
 // Public route that redirects to dashboard if already authenticated
 const AuthRoute = () => {
-  const { isAuthenticated, isLoading } = useAppContext();
+  const { isAuthenticated, isLoading, isOnboarded, isOnboardingQuizCompleted } = useAppContext();
   
   if (isLoading) {
     return (
@@ -56,7 +56,17 @@ const AuthRoute = () => {
     );
   }
   
-  return isAuthenticated ? <Navigate to="/dashboard" /> : <Outlet />;
+  // If authenticated and completed onboarding, go to dashboard
+  if (isAuthenticated && isOnboarded && isOnboardingQuizCompleted) {
+    return <Navigate to="/dashboard" />;
+  }
+  
+  // If authenticated but not completed onboarding, go to onboarding
+  if (isAuthenticated && (!isOnboarded || !isOnboardingQuizCompleted)) {
+    return <Navigate to="/onboarding" />;
+  }
+  
+  return <Outlet />;
 };
 
 // Routes for users who are authenticated but need onboarding
@@ -84,12 +94,38 @@ const OnboardingRoute = () => {
   return <Outlet />;
 };
 
+// Root route with auth state checking
+const RootRoute = () => {
+  const { isAuthenticated, isLoading, isOnboarded, isOnboardingQuizCompleted } = useAppContext();
+  
+  if (isLoading) {
+    return (
+      <div className="flex items-center justify-center min-h-screen">
+        <div className="animate-pulse">Loading...</div>
+      </div>
+    );
+  }
+  
+  // If not authenticated, redirect to login
+  if (!isAuthenticated) {
+    return <Navigate to="/login" />;
+  }
+  
+  // If authenticated but not onboarded, redirect to onboarding
+  if (!isOnboarded || !isOnboardingQuizCompleted) {
+    return <Navigate to="/onboarding" />;
+  }
+  
+  // If fully authenticated and onboarded, redirect to dashboard
+  return <Navigate to="/dashboard" />;
+};
+
 const AppRoutes = () => {
   return (
     <BrowserRouter>
       <Routes>
-        {/* Public routes */}
-        <Route path="/" element={<Index />} />
+        {/* Root route with auth checking */}
+        <Route path="/" element={<RootRoute />} />
         
         {/* Auth routes */}
         <Route element={<AuthRoute />}>

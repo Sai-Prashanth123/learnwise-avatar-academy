@@ -58,7 +58,7 @@ const Register: React.FC = () => {
     
     try {
       await loginWithGoogle();
-      navigate('/dashboard');
+      navigate('/onboarding');
     } catch (err: any) {
       setError(err.message || 'Failed to sign up with Google. Please try again.');
     } finally {
@@ -77,7 +77,7 @@ const Register: React.FC = () => {
     
     try {
       await register(email, password, name, degreeType, learningPreferences);
-      navigate('/dashboard');
+      navigate('/onboarding');
     } catch (err: any) {
       setError(err.message || 'Failed to register. Please try again.');
     }
@@ -251,7 +251,7 @@ const Register: React.FC = () => {
                     Back
                   </Button>
                   <Button type="submit" className="flex-1" disabled={isLoading}>
-                    {isLoading ? 'Registering...' : 'Create Account'}
+                    {isLoading ? 'Creating Account...' : 'Create Account'}
                   </Button>
                 </div>
               )}
@@ -262,7 +262,7 @@ const Register: React.FC = () => {
             <p className="text-sm text-gray-600">
               Already have an account?{' '}
               <Link to="/login" className="text-avatar-primary hover:underline font-medium">
-                Log In
+                Log in
               </Link>
             </p>
           </CardFooter>

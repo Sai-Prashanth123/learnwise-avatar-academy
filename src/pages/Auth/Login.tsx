@@ -9,12 +9,21 @@ import { Separator } from '@/components/ui/separator';
 
 const Login: React.FC = () => {
   const navigate = useNavigate();
-  const { login, loginWithGoogle, isLoading } = useAppContext();
+  const { login, loginWithGoogle, isLoading, isOnboarded, isOnboardingQuizCompleted } = useAppContext();
   
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
   const [isGoogleLoading, setIsGoogleLoading] = useState(false);
+
+  // Function to redirect based on onboarding status
+  const redirectAfterLogin = () => {
+    if (!isOnboarded || !isOnboardingQuizCompleted) {
+      navigate('/onboarding');
+    } else {
+      navigate('/dashboard');
+    }
+  };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -27,7 +36,7 @@ const Login: React.FC = () => {
     
     try {
       await login(email, password);
-      navigate('/dashboard');
+      redirectAfterLogin();
     } catch (err: any) {
       setError(err.message || 'Failed to login. Please try again.');
     }
@@ -39,7 +48,7 @@ const Login: React.FC = () => {
     
     try {
       await loginWithGoogle();
-      navigate('/dashboard');
+      redirectAfterLogin();
     } catch (err: any) {
       setError(err.message || 'Failed to login with Google. Please try again.');
     } finally {
